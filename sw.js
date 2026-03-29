@@ -1,4 +1,4 @@
-const CACHE_NAME = 'greencontrol-metal-v1';
+const CACHE_NAME = 'greencontrol-metal-v2';
 const urlsToCache = [
   './',
   './index.html',
