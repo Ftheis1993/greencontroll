@@ -1,4 +1,4 @@
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -12,21 +12,22 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        /* --- CSS Variablen --- */
         :root { 
             --bg-main: #030305; --glass-bg: rgba(20, 20, 25, 0.4); --glass-border: rgba(255, 255, 255, 0.08);
             --text-main: #ffffff; --text-dim: #8a8a9a; 
-            --neon-green: #00fa9a; --neon-blue: #00d2ff; --neon-orange: #ff9d00; --neon-purple: #b829ff; 
+            --neon-green: #00fa9a; --neon-blue: #00d2ff; --neon-orange: #ff9d00; --neon-purple: #b829ff; --neon-red: #ff2a55;
             --radius: 24px; --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body.light-mode {
             --bg-main: #e8eaf6; --glass-bg: rgba(255, 255, 255, 0.6); --glass-border: rgba(0, 0, 0, 0.1);
             --text-main: #1e272e; --text-dim: #636e72;
-            --neon-green: #00b894; --neon-blue: #0984e3; --neon-orange: #e17055; --neon-purple: #6c5ce7;
+            --neon-green: #00b894; --neon-blue: #0984e3; --neon-orange: #e17055; --neon-purple: #6c5ce7; --neon-red: #d63031;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-main); color: var(--text-main); padding: 20px 15px 110px 15px; min-height: 100vh; overflow-x: hidden; position: relative; transition: 0.4s; }
+        body { background-color: var(--bg-main); color: var(--text-main); padding: 20px 15px 120px 15px; min-height: 100vh; overflow-x: hidden; position: relative; transition: 0.4s; }
         body::before, body::after { content: ''; position: fixed; border-radius: 50%; filter: blur(80px); z-index: -1; opacity: 0.15; transition: 0.4s; }
         body::before { top: -10%; left: -10%; width: 300px; height: 300px; background: var(--neon-green); }
         body::after { bottom: 10%; right: -10%; width: 250px; height: 250px; background: var(--neon-purple); }
@@ -35,11 +36,14 @@
         .splash-logo { font-size: 52px; font-weight: 900; letter-spacing: -2px; color: var(--text-main); animation: glitchIntro 2.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; opacity: 0; position: relative; }
         .splash-logo span { color: var(--neon-green); }
         .splash-sub { color: var(--text-dim); margin-top: 10px; font-size: 12px; text-transform: uppercase; letter-spacing: 8px; animation: subFade 2.8s forwards; opacity: 0; }
-        @keyframes glitchIntro { 0% { opacity: 0; transform: scale(0.3) skewX(20deg); filter: blur(10px); } 15% { opacity: 1; transform: scale(1.1) skewX(-10deg); filter: blur(0); text-shadow: -4px 0 #ff2a55, 4px 0 var(--neon-blue); } 20% { transform: scale(1) skewX(0); text-shadow: 0 0 20px var(--neon-green); } 80% { opacity: 1; transform: scale(1.05); filter: blur(0); } 100% { opacity: 0; transform: scale(1.5); filter: blur(15px); } }
+        @keyframes glitchIntro { 0% { opacity: 0; transform: scale(0.3) skewX(20deg); filter: blur(10px); } 15% { opacity: 1; transform: scale(1.1) skewX(-10deg); filter: blur(0); text-shadow: -4px 0 var(--neon-red), 4px 0 var(--neon-blue); } 20% { transform: scale(1) skewX(0); text-shadow: 0 0 20px var(--neon-green); } 80% { opacity: 1; transform: scale(1.05); filter: blur(0); } 100% { opacity: 0; transform: scale(1.5); filter: blur(15px); } }
         @keyframes subFade { 0%, 20% { opacity: 0; } 30%, 80% { opacity: 1; } 100% { opacity: 0; } }
 
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; z-index: 10;}
+        .logo-container { display: flex; flex-direction: column; }
         .logo { font-size: 20px; font-weight: 300; letter-spacing: 1px;} .logo span { font-weight: 800; color: var(--neon-green); }
+        .live-clock { font-size: 11px; font-weight: 600; color: var(--text-dim); margin-top: 4px; letter-spacing: 1px; }
+        
         .header-controls { display: flex; gap: 10px; align-items: center; }
         .btn-ble { background: rgba(0, 250, 154, 0.1); color: var(--neon-green); border: 1px solid rgba(0, 250, 154, 0.3); padding: 8px 18px; border-radius: 30px; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: 0.3s; backdrop-filter: blur(10px);}
         .btn-ble.connected { background: var(--neon-green); color: #000; box-shadow: 0 0 20px rgba(0,250,154,0.4); border-color: var(--neon-green); }
@@ -74,6 +78,12 @@
         .ap-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px;}
         .ap-val { font-size: 15px; font-weight: 300; color: var(--text-main); }
 
+        .warning-card { border-color: rgba(255, 42, 85, 0.4); background: rgba(255, 42, 85, 0.05); display: none; }
+        .warning-card h3 { color: var(--neon-red); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+        .warning-list { list-style: none; font-size: 12px; color: var(--text-main); }
+        .warning-list li { margin-bottom: 5px; padding-left: 15px; position: relative; }
+        .warning-list li::before { content: '•'; position: absolute; left: 0; color: var(--neon-red); }
+
         .toggle { position: relative; width: 52px; height: 30px; } .toggle input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(120,120,120,0.2); border-radius: 30px; transition: .4s; }
         .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 3px; bottom: 3px; background-color: #fff; border-radius: 50%; transition: .4s; box-shadow: 0 2px 5px rgba(0,0,0,0.3);}
@@ -88,6 +98,8 @@
         .btn-save { width: 100%; background: var(--neon-green); color: #000; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; cursor: pointer; transition: 0.3s;}
         .btn-save.feedback { background: var(--neon-blue); color: #fff; transform: scale(0.98); }
         .btn-cancel { width: 100%; background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border); padding: 18px; border-radius: 16px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; cursor: pointer; transition: 0.3s;}
+        .btn-ai { background: linear-gradient(45deg, #b829ff, #00d2ff); color: #fff; border: none; padding: 10px 15px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 4px 15px rgba(184,41,255,0.3); transition: 0.3s;}
+        .btn-ai:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
         .phase-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none;}
         .phase-scroll::-webkit-scrollbar { display: none; }
@@ -97,10 +109,12 @@
         .tab-content { display: none; animation: fadeIn 0.5s ease; } .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .bottom-nav { position: fixed; bottom: 15px; left: 15px; right: 15px; background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; justify-content: space-around; padding: 15px 10px; z-index: 900; box-shadow: 0 10px 40px rgba(0,0,0,0.4);}
-        .nav-btn { background: none; border: none; color: var(--text-dim); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: 0.3s;}
-        .nav-btn.active { color: var(--text-main); } .nav-btn.active .nav-icon { color: var(--neon-green); filter: drop-shadow(0 0 10px rgba(0,250,154,0.5)); transform: translateY(-2px);}
-        .nav-icon { font-size: 22px; font-style: normal; transition: 0.3s;}
+        /* Modern Floating Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(15, 15, 20, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; display: flex; justify-content: space-around; padding: 12px 10px; z-index: 900; box-shadow: 0 10px 40px rgba(0,0,0,0.5);}
+        body.light-mode .bottom-nav { background: rgba(255, 255, 255, 0.85); border-color: rgba(0,0,0,0.1); }
+        .nav-btn { background: none; border: none; color: var(--text-dim); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: 0.3s;}
+        .nav-btn.active { color: var(--text-main); } .nav-btn.active .nav-icon { color: var(--neon-green); filter: drop-shadow(0 0 10px rgba(0,250,154,0.5)); transform: translateY(-3px);}
+        .nav-icon { font-size: 20px; font-style: normal; transition: 0.3s;}
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: 0.3s ease;}
         .modal-overlay.active { display: flex; opacity: 1; } 
@@ -116,8 +130,8 @@
             .klima-card { height: 240px; } .klima-title { font-size: 14px; } .klima-val { font-size: 64px; } .klima-icon { font-size: 28px; } .klima-unit { font-size: 20px; }
             .status-card { padding: 25px 15px; border-radius: 24px; } .status-icon { font-size: 36px; margin-bottom: 12px; } .status-text { font-size: 12px; }
             .ap-title { font-size: 20px; } .ap-val { font-size: 20px; } .ap-label { font-size: 12px; }
-            .bottom-nav { left: 50%; transform: translateX(-50%); width: 700px; padding: 20px 40px; gap: 20px; border-radius: 50px;}
-            .nav-icon { font-size: 28px; } .nav-btn { font-size: 12px; }
+            .bottom-nav { left: 50%; transform: translateX(-50%); width: 700px; padding: 15px 40px; gap: 20px;}
+            .nav-icon { font-size: 24px; } .nav-btn { font-size: 11px; }
             .desktop-split { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;}
         }
     </style>
@@ -129,7 +143,10 @@
     </div>
 
     <header>
-        <div class="logo">Green<span>Control</span></div>
+        <div class="logo-container">
+            <div class="logo">Green<span>Control</span></div>
+            <div class="live-clock" id="live-clock">--:--:-- | --.--.----</div>
+        </div>
         <div class="header-controls">
             <button class="theme-btn" onclick="toggleTheme()">🌓</button>
             <button id="bleBtn" class="btn-ble" onclick="connectBLE()">System Koppeln</button>
@@ -137,6 +154,12 @@
     </header>
 
     <div id="tab-dashboard" class="tab-content active">
+        
+        <div class="card warning-card" id="warning-card">
+            <h3><span>⚠️</span> Aktuelle Warnungen</h3>
+            <ul class="warning-list" id="warning-list"></ul>
+        </div>
+
         <div class="desktop-split">
             <div>
                 <div class="section-title">Klima & Analyse</div>
@@ -163,10 +186,10 @@
                 <div class="section-title">Aktiviertes Profil</div>
                 <div class="active-program-card" id="activeProgramCard">
                     <div class="ap-header"><div class="ap-title"><i style="font-style:normal;">⏳</i> Lade Daten...</div><span id="ap-daynight" style="font-size:11px; font-weight:600; padding:6px 12px; background:rgba(120,120,120,0.1); border-radius:20px; color:var(--text-main);">--</span></div>
-                    <div class="ap-grid" id="ap-details-grid"><div class="ap-item"><span class="ap-label">Temp</span><span class="ap-val">-- °C</span></div><div class="ap-item"><span class="ap-label">Hum</span><span class="ap-val">--</span></div><div class="ap-item"><span class="ap-label">Fan</span><span class="ap-val">--</span></div></div>
+                    <div class="ap-grid" id="ap-details-grid"><div class="ap-item"><span class="ap-label">Temp Ziel</span><span class="ap-val">-- °C</span></div><div class="ap-item"><span class="ap-label">Hum Ziel</span><span class="ap-val">--</span></div><div class="ap-item"><span class="ap-label">Fan Intervall</span><span class="ap-val">--</span></div></div>
                 </div>
 
-                <div class="section-title">Zyklus & Zeit</div>
+                <div class="section-title">Grow Dauer</div>
                 <div class="grid-2">
                     <div class="card" style="text-align: center; border-color: rgba(0,250,154,0.2);"><div class="tracker-title" style="font-size:10px; font-weight:700; color:var(--neon-green); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Wachstumstag</div><div class="tracker-days" style="font-size:36px; font-weight:300; color:var(--text-main); line-height:1;" id="val-days-growth">--</div></div>
                     <div class="card" style="text-align: center; border-color: rgba(184,41,255,0.2);"><div class="tracker-title" style="font-size:10px; font-weight:700; color:var(--neon-purple); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Blütetag</div><div class="tracker-days" style="font-size:36px; font-weight:300; color:var(--text-main); line-height:1;" id="val-days-bloom">--</div></div>
@@ -178,7 +201,7 @@
     <div id="tab-control" class="tab-content">
         <div class="desktop-split">
             <div>
-                <div class="section-title">Automatik Profile</div>
+                <div class="section-title">Profile</div>
                 <div class="phase-scroll">
                     <button class="phase-btn" id="btn-manuell" onclick="setPhase('manuell')"><i>👆</i>Manuell</button>
                     <button class="phase-btn" id="btn-keimling" onclick="setPhase('keimling')"><i>🌱</i>Keimling</button>
@@ -187,23 +210,23 @@
                     <button class="phase-btn" id="btn-trocknung" onclick="setPhase('trocknung')"><i>🍂</i>Trocknung</button>
                 </div>
 
-                <div class="section-title" style="margin-top: 30px; display:flex; justify-content:space-between;"><span>Geräte Setup & Override</span><span id="lock-hint" style="color: var(--neon-orange); font-size: 10px; display:none;">🔒 RELAIS GESPERRT</span></div>
+                <div class="section-title" style="margin-top: 30px; display:flex; justify-content:space-between;"><span>Geräteeinstellungen</span><span id="lock-hint" style="color: var(--neon-orange); font-size: 10px; display:none;">🔒 RELAIS GESPERRT</span></div>
                 
                 <div class="grid-2">
                     <div class="card" id="card-heizung" style="padding:15px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:24px;">🔥</span><label class="toggle"><input type="checkbox" id="rel-heizung" onchange="manualOverride('heizung', this)"><span class="slider"></span></label></div>
                         <div style="font-size:14px; font-weight:700; text-transform:uppercase;">Heizung</div><div style="font-size:11px; color:var(--text-dim); margin-top:4px;" id="info-heizung">Ziel: -- °C</div>
-                        <button style="margin-top:12px; background:none; border:1px solid var(--glass-border); color:var(--text-main); padding:8px; width:100%; border-radius:12px; font-size:11px; cursor:pointer;" onclick="openModal('heizung')">⚙ Zielwerte</button>
+                        <button style="margin-top:12px; background:none; border:1px solid var(--glass-border); color:var(--text-main); padding:8px; width:100%; border-radius:12px; font-size:11px; cursor:pointer;" onclick="openModal('heizung')">⚙ Werte anpassen</button>
                     </div>
                     <div class="card" id="card-befeuchter" style="padding:15px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:24px;">💧</span><label class="toggle"><input type="checkbox" id="rel-befeuchter" onchange="manualOverride('befeuchter', this)"><span class="slider"></span></label></div>
                         <div style="font-size:14px; font-weight:700; text-transform:uppercase;">Befeuchter</div><div style="font-size:11px; color:var(--text-dim); margin-top:4px;" id="info-befeuchter">Ziel: -- %</div>
-                        <button style="margin-top:12px; background:none; border:1px solid var(--glass-border); color:var(--text-main); padding:8px; width:100%; border-radius:12px; font-size:11px; cursor:pointer;" onclick="openModal('befeuchter')">⚙ Zielwerte</button>
+                        <button style="margin-top:12px; background:none; border:1px solid var(--glass-border); color:var(--text-main); padding:8px; width:100%; border-radius:12px; font-size:11px; cursor:pointer;" onclick="openModal('befeuchter')">⚙ Werte anpassen</button>
                     </div>
                     <div class="card" id="card-ventilator" style="padding:15px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:24px; filter:grayscale(1);">🌀</span><label class="toggle"><input type="checkbox" id="rel-ventilator" onchange="manualOverride('ventilator', this)"><span class="slider"></span></label></div>
                         <div style="font-size:14px; font-weight:700; text-transform:uppercase;">Umluft</div><div style="font-size:11px; color:var(--text-dim); margin-top:4px;" id="info-ventilator">Zyk: --/--</div>
-                        <button style="margin-top:12px; background:none; border:1px solid var(--glass-border); color:var(--text-main); padding:8px; width:100%; border-radius:12px; font-size:11px; cursor:pointer;" onclick="openModal('ventilator')">⚙ Intervalle</button>
+                        <button style="margin-top:12px; background:none; border:1px solid var(--glass-border); color:var(--text-main); padding:8px; width:100%; border-radius:12px; font-size:11px; cursor:pointer;" onclick="openModal('ventilator')">⚙ Werte anpassen</button>
                     </div>
                     <div class="card" style="padding:15px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:24px;">🌬️</span><label class="toggle"><input type="checkbox" id="rel-abluft" onchange="manualOverride('abluft', this)"><span class="slider"></span></label></div>
@@ -222,9 +245,17 @@
                         <div class="form-group"><label class="form-label">Start Blüte</label><input type="date" id="gl-start-b" class="form-control" onchange="saveGlobalSettings()"></div>
                     </div>
                     
-                    <div style="margin-top: 15px; display: flex; gap: 10px;">
-                        <button style="flex:1; background:rgba(0,250,154,0.1); color:var(--neon-green); border:1px solid var(--neon-green); padding:12px; border-radius:12px; font-weight:700; cursor:pointer;" onclick="syncTime()">⌚ Uhrzeit Sync</button>
-                        <button style="flex:1; background:rgba(255,42,85,0.1); color:#ff2a55; border:1px solid #ff2a55; padding:12px; border-radius:12px; font-weight:700; cursor:pointer;" onclick="startOTA()">📡 OTA Update</button>
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--glass-border);">
+                        <label class="form-label">Systemzeit manuell setzen</label>
+                        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                            <input type="datetime-local" id="manual-datetime" class="form-control" style="flex: 2;">
+                            <button style="flex: 1; background:var(--metal-btn); border:1px solid var(--glass-border); color:#fff; border-radius:12px; cursor:pointer;" onclick="setManualTime()">Setzen</button>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button style="flex:1; background:rgba(0,250,154,0.1); color:var(--neon-green); border:1px solid var(--neon-green); padding:12px; border-radius:12px; font-weight:700; cursor:pointer;" onclick="syncTime()">📱 Handy Sync</button>
+                            <button style="flex:1; background:rgba(255,42,85,0.1); color:#ff2a55; border:1px solid #ff2a55; padding:12px; border-radius:12px; font-weight:700; cursor:pointer;" onclick="startOTA()">📡 OTA Update</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -233,16 +264,16 @@
 
     <div id="tab-plants" class="tab-content">
         <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
-            <span>Pflanzen & Tracking</span>
-            <button style="background:none; border:1px solid var(--text-dim); color:var(--text-main); padding:5px 10px; border-radius:8px; cursor:pointer; font-size:10px; font-weight:700;" onclick="exportCSV()">💾 CSV Export</button>
+            <span>Pflanzen & Notizen</span>
+            <button style="background:none; border:1px solid var(--text-dim); color:var(--text-main); padding:6px 12px; border-radius:10px; cursor:pointer; font-size:10px; font-weight:700;" onclick="exportCSV()">💾 CSV Export</button>
         </div>
         <div class="desktop-split" id="plant-container"></div>
     </div>
 
     <nav class="bottom-nav">
-        <button class="nav-btn active" onclick="switchTab('dashboard', this)"><i class="nav-icon">🎛️</i>Dashboard</button>
-        <button class="nav-btn" onclick="switchTab('control', this)"><i class="nav-icon">⚙️</i>Steuerung</button>
-        <button class="nav-btn" onclick="switchTab('plants', this)"><i class="nav-icon">🪴</i>Pflanzen</button>
+        <button class="nav-btn active" onclick="switchTab('dashboard', this)"><i class="nav-icon">📊</i>Dashboard</button>
+        <button class="nav-btn" onclick="switchTab('control', this)"><i class="nav-icon">🎛️</i>Steuerung</button>
+        <button class="nav-btn" onclick="switchTab('plants', this)"><i class="nav-icon">🌿</i>Pflanzen</button>
     </nav>
 
     <div class="modal-overlay" id="setupModal">
@@ -251,6 +282,16 @@
             <div id="modalBody"></div>
             <button class="btn-save" onclick="saveSettings()">Werte Speichern</button>
             <button class="btn-cancel" onclick="document.getElementById('setupModal').classList.remove('active')">Abbrechen</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="aiModal">
+        <div class="modal-content">
+            <h2 style="margin-bottom:15px; font-size:18px; font-weight:700; color:var(--neon-blue);">✨ KI Prompt Generator</h2>
+            <p style="font-size:12px; color:var(--text-dim); margin-bottom:15px; line-height:1.5;">Kopiere diesen Befehl und füge ihn bei ChatGPT oder Gemini ein, um perfekte Tipps für deine Pflanze zu erhalten:</p>
+            <textarea id="ai-prompt-text" class="form-control" style="min-height:120px; font-size:13px; color:var(--neon-green);" readonly></textarea>
+            <button class="btn-save" style="background:var(--neon-blue); color:#fff;" onclick="copyPrompt()">📋 Prompt Kopieren</button>
+            <button class="btn-cancel" onclick="document.getElementById('aiModal').classList.remove('active')">Schließen</button>
         </div>
     </div>
 
@@ -269,7 +310,15 @@
             renderPlantCards(); loadPlants(); loadGlobalSettings(); 
             initSparklines(); generateDummyHistory(); 
             updateDashboardInfo();
+            setInterval(updateLiveClock, 1000);
         };
+
+        function updateLiveClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('de-DE');
+            const date = now.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            document.getElementById('live-clock').innerText = `${time} | ${date}`;
+        }
 
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
@@ -321,6 +370,39 @@
         function updateDashboardInfo() {
             const s = appState.settings; const isAuto = appState.activePhase !== 'manuell';
             
+            // Warnings Logic
+            const warnings = [];
+            const now = new Date(); const currentMins = now.getHours() * 60 + now.getMinutes();
+            const parseTime = (t) => { if(!t) return 0; const [h,m] = t.split(':'); return parseInt(h)*60 + parseInt(m); };
+            const startM = parseTime(appState.global.dayStart); const endM = parseTime(appState.global.dayEnd);
+            
+            // Korrekte Tag/Nacht Logik für Zeiten über Mitternacht
+            const isDay = (startM <= endM) ? (currentMins >= startM && currentMins < endM) : (currentMins >= startM || currentMins < endM);
+
+            if (appState.sensor.temp > 0) { // Nur wenn Sensor läuft
+                let targetT = isDay ? s.heizung.tag : s.heizung.nacht;
+                if (appState.sensor.temp > setVentilator?.maxTemp) warnings.push(`Notfallkühlung aktiv! (${appState.sensor.temp.toFixed(1)}°C)`);
+                else if (appState.sensor.temp > targetT + s.heizung.hyst + 2) warnings.push("Temperatur ist deutlich zu hoch.");
+                else if (appState.sensor.temp < targetT - s.heizung.hyst - 2) warnings.push("Temperatur ist deutlich zu niedrig.");
+
+                if (s.befeuchter.modus === 'rlf') {
+                    if (appState.sensor.hum < s.befeuchter.zielRlf - s.befeuchter.hyst - 5) warnings.push("Luftfeuchtigkeit ist zu niedrig.");
+                    if (appState.sensor.hum > s.befeuchter.zielRlf + s.befeuchter.hyst + 5) warnings.push("Luftfeuchtigkeit ist zu hoch.");
+                } else {
+                    if (appState.sensor.vpd > s.befeuchter.zielVpd + 0.3) warnings.push("VPD zu hoch (Luft zu trocken).");
+                }
+            }
+
+            const wCard = document.getElementById('warning-card');
+            const wList = document.getElementById('warning-list');
+            if(warnings.length > 0 && isAuto) {
+                wList.innerHTML = warnings.map(w => `<li>${w}</li>`).join('');
+                wCard.style.display = 'block';
+            } else {
+                wCard.style.display = 'none';
+            }
+
+            // Info Updates
             document.getElementById('info-heizung').innerText = `Ziel: ${s.heizung.tag}°C / ${s.heizung.nacht}°C`;
             document.getElementById('info-befeuchter').innerText = s.befeuchter.modus === 'vpd' ? `Ziel: ${s.befeuchter.zielVpd} kPa` : `Ziel: ${s.befeuchter.zielRlf} %`;
             document.getElementById('info-ventilator').innerText = `Zyk: ${s.ventilator.onMin}m / ${s.ventilator.offMin}m`;
@@ -347,10 +429,9 @@
                 document.getElementById('ap-daynight').innerText = "OVERRIDE"; document.getElementById('ap-daynight').style.color = "var(--text-main)";
             } else {
                 apCard.style.borderColor = 'rgba(0,250,154,0.3)'; apCard.querySelector('.ap-title').innerHTML = `<i style="font-style:normal;">🌱</i> ${appState.activePhase.toUpperCase()}`; apCard.querySelector('.ap-title').style.color = 'var(--neon-green)';
-                const now = new Date(); const currentHM = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
-                const isDay = (currentHM >= appState.global.dayStart && currentHM < appState.global.dayEnd);
+                
                 document.getElementById('ap-daynight').innerText = isDay ? "☀️ TAG" : "🌙 NACHT"; document.getElementById('ap-daynight').style.color = isDay ? "var(--neon-orange)" : "var(--neon-blue)";
-                grid.innerHTML = `<div class="ap-item"><span class="ap-label">Temp</span><span class="ap-val">${isDay ? s.heizung.tag : s.heizung.nacht}°C <span style="color:var(--text-dim); font-size:10px;">(±${s.heizung.hyst})</span></span></div><div class="ap-item"><span class="ap-label">Hum</span><span class="ap-val">${s.befeuchter.modus === 'vpd' ? s.befeuchter.zielVpd.toFixed(1) + ' kPa' : s.befeuchter.zielRlf + '%'}</span></div><div class="ap-item"><span class="ap-label">Fan</span><span class="ap-val">${s.ventilator.onMin}m / ${s.ventilator.offMin}m</span></div>`;
+                grid.innerHTML = `<div class="ap-item"><span class="ap-label">Temp Ziel</span><span class="ap-val">${isDay ? s.heizung.tag : s.heizung.nacht}°C <span style="color:var(--text-dim); font-size:10px;">(±${s.heizung.hyst})</span></span></div><div class="ap-item"><span class="ap-label">Hum Ziel</span><span class="ap-val">${s.befeuchter.modus === 'vpd' ? s.befeuchter.zielVpd.toFixed(1) + ' kPa' : s.befeuchter.zielRlf + '%'}</span></div><div class="ap-item"><span class="ap-label">Fan Intervall</span><span class="ap-val">${s.ventilator.onMin}m / ${s.ventilator.offMin}m</span></div>`;
             }
 
             const calcDays = (d) => d ? Math.max(0, Math.floor((new Date() - new Date(d)) / 86400000)) : 0;
@@ -363,7 +444,7 @@
         let currentModal = '';
         function openModal(type) {
             currentModal = type; const body = document.getElementById('modalBody'); const s = appState.settings;
-            document.getElementById('modalTitle').innerText = "⚙ " + type.toUpperCase() + " SETUP";
+            document.getElementById('modalTitle').innerText = "⚙ " + type.toUpperCase() + " EINSTELLUNGEN";
             if(type === 'heizung') body.innerHTML = `<div class="form-group"><label class="form-label">Tag Ziel (°C)</label><input type="number" step="0.5" id="in-ht" class="form-control" value="${s.heizung.tag}"></div><div class="form-group"><label class="form-label">Nacht Ziel (°C)</label><input type="number" step="0.5" id="in-hn" class="form-control" value="${s.heizung.nacht}"></div><div class="form-group"><label class="form-label">Hysterese (± °C)</label><input type="number" step="0.1" id="in-hh" class="form-control" value="${s.heizung.hyst}"></div>`;
             if(type === 'befeuchter') { body.innerHTML = `<div class="form-group"><label class="form-label">Steuerungs-Modus</label><select id="in-bm" class="form-control" onchange="toggleHumUI()"><option value="rlf" ${s.befeuchter.modus==='rlf'?'selected':''}>Fixe RLF (%)</option><option value="vpd" ${s.befeuchter.modus==='vpd'?'selected':''}>VPD Sättigung (kPa)</option></select></div><div class="form-group" id="w-rlf"><label class="form-label">Ziel RLF (%)</label><input type="number" id="in-br" class="form-control" value="${s.befeuchter.zielRlf}"></div><div class="form-group" id="w-vpd" style="display:none;"><label class="form-label">Ziel VPD (kPa)</label><input type="number" step="0.1" id="in-bv" class="form-control" value="${s.befeuchter.zielVpd}"></div><div class="form-group"><label class="form-label">Hysterese (±)</label><input type="number" step="0.5" id="in-bh" class="form-control" value="${s.befeuchter.hyst}"></div>`; setTimeout(toggleHumUI, 10); }
             if(type === 'ventilator') body.innerHTML = `<div class="form-group"><label class="form-label">ON Intervall (Minuten)</label><input type="number" id="in-vo" class="form-control" value="${s.ventilator.onMin}"></div><div class="form-group"><label class="form-label">OFF Intervall (Minuten)</label><input type="number" id="in-vf" class="form-control" value="${s.ventilator.offMin}"></div><div class="form-group"><label class="form-label">Notfall-Kühlung ab (°C)</label><input type="number" step="0.5" id="in-vm" class="form-control" value="${s.ventilator.maxTemp}"></div>`;
@@ -383,27 +464,47 @@
             let html = '';
             for(let i=1; i<=4; i++) {
                 html += `<div class="card" style="padding: 25px;">
-                    <div style="font-size:18px; font-weight:300; color:var(--neon-purple); margin-bottom:20px; border-bottom:1px solid var(--glass-border); padding-bottom:15px; display:flex; justify-content:space-between;">
-                        <span>🪴 Pflanze 0${i}</span><span style="font-size:10px; color:var(--text-dim); font-weight:normal;">Lokal</span>
+                    <div style="font-size:16px; font-weight:700; color:var(--neon-green); margin-bottom:20px; border-bottom:1px solid var(--glass-border); padding-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+                        <span>🪴 Slot 0${i}</span>
+                        <button class="btn-ai" onclick="openAIModal(${i})">✨ KI Assistent</button>
                     </div>
                     <div class="grid-2">
-                        <div class="form-group"><label class="form-label">Sorte</label><input type="text" id="p${i}-s" class="form-control" placeholder="Sorte"></div>
-                        <div class="form-group"><label class="form-label">Breeder</label><input type="text" id="p${i}-b" class="form-control" placeholder="Breeder"></div>
-                        <div class="form-group"><label class="form-label">Medium</label><input type="text" id="p${i}-m" class="form-control" placeholder="Erde/Hydro"></div>
+                        <div class="form-group"><label class="form-label">Sorte</label><input type="text" id="p${i}-s" class="form-control" placeholder="z.B. Northern Lights"></div>
+                        <div class="form-group"><label class="form-label">Breeder</label><input type="text" id="p${i}-b" class="form-control" placeholder="z.B. RQS"></div>
+                        <div class="form-group"><label class="form-label">Medium</label><input type="text" id="p${i}-m" class="form-control" placeholder="z.B. BioBizz Erde"></div>
                         <div class="form-group"><label class="form-label">Keimdatum</label><input type="date" id="p${i}-d" class="form-control"></div>
                     </div>
-                    <div class="form-group"><label class="form-label">Dünger</label><input type="text" id="p${i}-nut" class="form-control" placeholder="Schema..."></div>
-                    <div class="form-group"><label class="form-label">Notizen</label><textarea id="p${i}-n" class="form-control" style="min-height:100px;" placeholder="Tagebuch..."></textarea></div>
-                    <button class="btn-save" style="background:rgba(184,41,255,0.1); color:var(--neon-purple); border:1px solid var(--neon-purple);" onclick="savePlant(${i}, this)">Speichern</button>
+                    <div class="form-group"><label class="form-label">Dünger</label><input type="text" id="p${i}-nut" class="form-control" placeholder="Aktuelles Schema..."></div>
+                    <div class="form-group"><label class="form-label">Notizen</label><textarea id="p${i}-n" class="form-control" style="min-height:80px;" placeholder="Wachstum, Auffälligkeiten..."></textarea></div>
+                    <button class="btn-save" style="background:rgba(0,250,154,0.1); color:var(--neon-green); border:1px solid var(--neon-green);" onclick="savePlant(${i}, this)">Dossier Speichern</button>
                 </div>`;
             }
             document.getElementById('plant-container').innerHTML = html;
         }
 
+        function openAIModal(slotIndex) {
+            const strain = document.getElementById(`p${slotIndex}-s`).value || "[Name der Sorte]";
+            const medium = document.getElementById(`p${slotIndex}-m`).value || "[Dein Medium]";
+            const phase = appState.activePhase;
+            
+            const prompt = `Hallo KI, ich züchte gerade die Sorte "${strain}" in dem Medium "${medium}". Meine Pflanze befindet sich aktuell in der Phase "${phase}". 
+Kannst du mir die wichtigsten Tipps für diese Phase geben? Worauf muss ich bei Nährstoffen, Temperatur und Luftfeuchtigkeit achten? Gibt es bei dieser Sorte Besonderheiten?`;
+            
+            document.getElementById('ai-prompt-text').value = prompt;
+            document.getElementById('aiModal').classList.add('active');
+        }
+
+        function copyPrompt() {
+            const text = document.getElementById('ai-prompt-text');
+            text.select(); document.execCommand('copy');
+            alert("Prompt in die Zwischenablage kopiert! Du kannst ihn nun bei ChatGPT oder Gemini einfügen.");
+            document.getElementById('aiModal').classList.remove('active');
+        }
+
         function savePlant(i, btn) {
             localStorage.setItem(`p${i}`, JSON.stringify({s: document.getElementById(`p${i}-s`).value, b: document.getElementById(`p${i}-b`).value, m: document.getElementById(`p${i}-m`).value, d: document.getElementById(`p${i}-d`).value, nut: document.getElementById(`p${i}-nut`).value, n: document.getElementById(`p${i}-n`).value}));
             btn.classList.add('feedback'); btn.innerText = "✅ GESPEICHERT";
-            setTimeout(() => { btn.classList.remove('feedback'); btn.innerText = "Speichern"; }, 1500);
+            setTimeout(() => { btn.classList.remove('feedback'); btn.innerText = "Dossier Speichern"; }, 1500);
         }
 
         function loadPlants() {
@@ -428,6 +529,14 @@
             const unix = Math.floor(Date.now() / 1000);
             sendBLECommand({ timeSync: unix });
             alert("Uhrzeit erfolgreich mit Smartphone synchronisiert!");
+        }
+
+        function setManualTime() {
+            const manualVal = document.getElementById('manual-datetime').value;
+            if(!manualVal) { alert("Bitte wähle zuerst ein Datum und eine Uhrzeit aus."); return; }
+            const unix = Math.floor(new Date(manualVal).getTime() / 1000);
+            sendBLECommand({ timeSync: unix });
+            alert("Manuelle Uhrzeit an das System gesendet!");
         }
 
         function startOTA() {
