@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -8,14 +8,10 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
     <link rel="icon" href="icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* --- CSS Variablen --- */
         :root { 
             --bg-main: #030305; --glass-bg: rgba(20, 20, 25, 0.4); --glass-border: rgba(255, 255, 255, 0.08);
             --text-main: #ffffff; --text-dim: #8a8a9a; 
@@ -35,22 +31,13 @@
         body::before { top: -10%; left: -10%; width: 300px; height: 300px; background: var(--neon-green); }
         body::after { bottom: 10%; right: -10%; width: 250px; height: 250px; background: var(--neon-purple); }
         
-        /* Action Intro Splash Screen */
         #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease-out, visibility 0.5s ease-out; }
         .splash-logo { font-size: 52px; font-weight: 900; letter-spacing: -2px; color: var(--text-main); animation: glitchIntro 2.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; opacity: 0; position: relative; }
         .splash-logo span { color: var(--neon-green); }
         .splash-sub { color: var(--text-dim); margin-top: 10px; font-size: 12px; text-transform: uppercase; letter-spacing: 8px; animation: subFade 2.8s forwards; opacity: 0; }
-        
-        @keyframes glitchIntro {
-            0% { opacity: 0; transform: scale(0.3) skewX(20deg); filter: blur(10px); }
-            15% { opacity: 1; transform: scale(1.1) skewX(-10deg); filter: blur(0); text-shadow: -4px 0 #ff2a55, 4px 0 var(--neon-blue); }
-            20% { transform: scale(1) skewX(0); text-shadow: 0 0 20px var(--neon-green); }
-            80% { opacity: 1; transform: scale(1.05); filter: blur(0); }
-            100% { opacity: 0; transform: scale(1.5); filter: blur(15px); }
-        }
+        @keyframes glitchIntro { 0% { opacity: 0; transform: scale(0.3) skewX(20deg); filter: blur(10px); } 15% { opacity: 1; transform: scale(1.1) skewX(-10deg); filter: blur(0); text-shadow: -4px 0 #ff2a55, 4px 0 var(--neon-blue); } 20% { transform: scale(1) skewX(0); text-shadow: 0 0 20px var(--neon-green); } 80% { opacity: 1; transform: scale(1.05); filter: blur(0); } 100% { opacity: 0; transform: scale(1.5); filter: blur(15px); } }
         @keyframes subFade { 0%, 20% { opacity: 0; } 30%, 80% { opacity: 1; } 100% { opacity: 0; } }
 
-        /* Header */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; z-index: 10;}
         .logo { font-size: 20px; font-weight: 300; letter-spacing: 1px;} .logo span { font-weight: 800; color: var(--neon-green); }
         .header-controls { display: flex; gap: 10px; align-items: center; }
@@ -58,33 +45,23 @@
         .btn-ble.connected { background: var(--neon-green); color: #000; box-shadow: 0 0 20px rgba(0,250,154,0.4); border-color: var(--neon-green); }
         .theme-btn { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-main); font-size: 14px; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); transition: 0.3s;}
         
-        /* Layout & Grids */
         .section-title { font-size: 14px; text-transform: uppercase; color: var(--text-dim); margin: 40px 0 15px 5px; font-weight: 700; letter-spacing: 2px;}
         .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         
-        .card { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 20px; position: relative; overflow: hidden; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .card-locked { opacity: 0.5; pointer-events: none; }
+        .card { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 20px; position: relative; overflow: hidden; transition: 0.4s; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         
-        /* Dynamische Klima Kacheln & Diagramme */
         .klima-card { height: 180px; display: flex; flex-direction: column; justify-content: flex-start;}
         .klima-header { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; z-index: 2;}
-        .klima-icon { font-size: 20px; font-style: normal; }
         .klima-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; z-index: 2; color: var(--text-main);}
         .klima-val { font-size: 40px; font-weight: 300; z-index: 2; margin-top: 5px; letter-spacing: -1.5px;}
         .klima-unit { font-size: 16px; opacity: 0.5; font-weight: 400; margin-left: 2px;}
         .temp-color { color: var(--neon-orange); } .hum-color { color: var(--neon-blue); } .vpd-color { color: var(--neon-green); }
+        .sparkline-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 55%; z-index: 0; opacity: 0.6; mix-blend-mode: screen;}
         
-        .sparkline-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 55%; z-index: 0; opacity: 0.6; mix-blend-mode: screen; overflow: hidden;}
-        body.light-mode .sparkline-container { mix-blend-mode: multiply; }
-        .sparkline-container::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); animation: sweep 3.5s infinite linear; pointer-events: none; }
-        @keyframes sweep { 0% { left: -100%; } 50%, 100% { left: 200%; } }
-
-        /* Dynamische Status Kacheln */
         .status-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 15px 5px; border-radius: 18px; text-align: center; backdrop-filter: blur(10px); transition: all 0.4s ease;}
         .status-card.is-on { background: rgba(255,255,255,0.05); border-color: currentColor; animation: pulseDevice 2s infinite ease-in-out; z-index: 2;}
         @keyframes pulseDevice { 0%, 100% { box-shadow: inset 0 0 10px currentColor, 0 5px 15px rgba(0,0,0,0.2); transform: scale(1); } 50% { box-shadow: inset 0 0 20px currentColor, 0 10px 25px currentColor; transform: scale(1.03) translateY(-2px); } }
-        
         .status-icon { font-size: 24px; margin-bottom: 8px; font-style: normal; display: block; opacity: 0.2; transition: 0.4s;} 
         .status-card.is-on .status-icon { opacity: 1; filter: drop-shadow(0 0 12px currentColor);}
         .status-text { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;} 
@@ -107,62 +84,40 @@
         .form-control { width: 100%; background: rgba(120,120,120,0.05); border: 1px solid var(--glass-border); color: var(--text-main); padding: 16px; border-radius: 16px; outline: none; transition: 0.3s; font-size: 15px;}
         .form-control:focus { border-color: var(--neon-green); background: rgba(0,250,154,0.03); }
         select.form-control { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23707080' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 15px center; background-size: 16px; }
+        
         .btn-save { width: 100%; background: var(--neon-green); color: #000; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; cursor: pointer; transition: 0.3s;}
+        .btn-save.feedback { background: var(--neon-blue); color: #fff; transform: scale(0.98); }
         .btn-cancel { width: 100%; background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border); padding: 18px; border-radius: 16px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; cursor: pointer; transition: 0.3s;}
 
         .phase-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none;}
         .phase-scroll::-webkit-scrollbar { display: none; }
         .phase-btn { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dim); padding: 12px 25px; border-radius: 30px; font-size: 12px; font-weight: 600; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; gap: 10px; white-space: nowrap; transition: 0.3s; backdrop-filter: blur(10px);}
-        .phase-btn i { font-size: 16px; font-style: normal; opacity: 0.5;}
         .phase-btn.active { background: rgba(0, 250, 154, 0.15); border-color: var(--neon-green); color: var(--neon-green); }
-        .phase-btn.active i { opacity: 1; filter: drop-shadow(0 0 5px var(--neon-green));}
 
         .tab-content { display: none; animation: fadeIn 0.5s ease; } .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Navigation */
-        .bottom-nav { position: fixed; bottom: 15px; left: 15px; right: 15px; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; justify-content: space-around; padding: 15px 10px; z-index: 900; box-shadow: 0 10px 40px rgba(0,0,0,0.4);}
+        .bottom-nav { position: fixed; bottom: 15px; left: 15px; right: 15px; background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; justify-content: space-around; padding: 15px 10px; z-index: 900; box-shadow: 0 10px 40px rgba(0,0,0,0.4);}
         .nav-btn { background: none; border: none; color: var(--text-dim); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: 0.3s;}
         .nav-btn.active { color: var(--text-main); } .nav-btn.active .nav-icon { color: var(--neon-green); filter: drop-shadow(0 0 10px rgba(0,250,154,0.5)); transform: translateY(-2px);}
         .nav-icon { font-size: 22px; font-style: normal; transition: 0.3s;}
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease;}
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: 0.3s ease;}
         .modal-overlay.active { display: flex; opacity: 1; } 
-        .modal-content { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); width: 100%; max-width: 400px; border-radius: 24px; padding: 25px; transform: scale(0.95); transition: transform 0.3s ease; max-height: 90vh; overflow-y: auto;}
+        .modal-content { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); width: 100%; max-width: 400px; border-radius: 24px; padding: 25px; transform: scale(0.95); transition: 0.3s ease; max-height: 90vh; overflow-y: auto;}
         .modal-overlay.active .modal-content { transform: scale(1); }
 
-        /* --- DESKTOP SCALING --- */
         @media (min-width: 768px) {
             body { padding: 50px; padding-top: 120px; padding-bottom: 140px;}
             header { position: fixed; top: 0; left: 0; right: 0; background: var(--glass-bg); backdrop-filter: blur(20px); padding: 25px 50px; z-index: 900; border-bottom: 1px solid var(--glass-border); margin: 0;}
             .logo { font-size: 26px; }
-            
             .section-title { font-size: 18px; margin: 50px 0 25px 5px; }
             .card { padding: 30px; border-radius: 30px;}
-            
-            .klima-card { height: 240px; }
-            .klima-title { font-size: 14px; }
-            .klima-val { font-size: 64px; }
-            .klima-icon { font-size: 28px; }
-            .klima-unit { font-size: 20px; }
-            
-            .status-card { padding: 25px 15px; border-radius: 24px; }
-            .status-icon { font-size: 36px; margin-bottom: 12px; }
-            .status-text { font-size: 12px; }
-            
-            .ap-title { font-size: 20px; }
-            .ap-val { font-size: 20px; }
-            .ap-label { font-size: 12px; }
-            
-            /* Tracker */
-            .tracker-title { font-size: 14px; }
-            .tracker-days { font-size: 48px; }
-
-            /* Navigation */
+            .klima-card { height: 240px; } .klima-title { font-size: 14px; } .klima-val { font-size: 64px; } .klima-icon { font-size: 28px; } .klima-unit { font-size: 20px; }
+            .status-card { padding: 25px 15px; border-radius: 24px; } .status-icon { font-size: 36px; margin-bottom: 12px; } .status-text { font-size: 12px; }
+            .ap-title { font-size: 20px; } .ap-val { font-size: 20px; } .ap-label { font-size: 12px; }
             .bottom-nav { left: 50%; transform: translateX(-50%); width: 700px; padding: 20px 40px; gap: 20px; border-radius: 50px;}
-            .nav-icon { font-size: 28px; }
-            .nav-btn { font-size: 12px; }
-            
+            .nav-icon { font-size: 28px; } .nav-btn { font-size: 12px; }
             .desktop-split { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;}
         }
     </style>
@@ -186,23 +141,12 @@
             <div>
                 <div class="section-title">Klima & Analyse</div>
                 <div class="grid-2">
-                    <div class="card klima-card">
-                        <div class="klima-header"><i class="klima-icon temp-color">🌡️</i><span class="klima-title">Temperatur</span></div>
-                        <div class="klima-val temp-color" id="val-temp">--.-<span class="klima-unit">°C</span></div>
-                        <div class="sparkline-container"><canvas id="tempChart"></canvas></div>
-                    </div>
-                    <div class="card klima-card">
-                        <div class="klima-header"><i class="klima-icon hum-color">💧</i><span class="klima-title">Feuchtigkeit</span></div>
-                        <div class="klima-val hum-color" id="val-hum">--<span class="klima-unit">%</span></div>
-                        <div class="sparkline-container"><canvas id="humChart"></canvas></div>
-                    </div>
+                    <div class="card klima-card"><div class="klima-header"><i class="klima-icon temp-color">🌡️</i><span class="klima-title">Temperatur</span></div><div class="klima-val temp-color" id="val-temp">--.-<span class="klima-unit">°C</span></div><div class="sparkline-container"><canvas id="tempChart"></canvas></div></div>
+                    <div class="card klima-card"><div class="klima-header"><i class="klima-icon hum-color">💧</i><span class="klima-title">Feuchtigkeit</span></div><div class="klima-val hum-color" id="val-hum">--<span class="klima-unit">%</span></div><div class="sparkline-container"><canvas id="humChart"></canvas></div></div>
                 </div>
 
                 <div class="card" style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; border-color: rgba(0,250,154,0.1);">
-                    <div>
-                        <div class="klima-header" style="margin-bottom:2px;"><i class="klima-icon vpd-color">⚖️</i><span class="klima-title">VPD Sättigung</span></div>
-                        <div style="font-size:12px; color:var(--text-dim);" id="vpd-status-text">Analysiere Luft...</div>
-                    </div>
+                    <div><div class="klima-header" style="margin-bottom:2px;"><i class="klima-icon vpd-color">⚖️</i><span class="klima-title">VPD Sättigung</span></div><div style="font-size:12px; color:var(--text-dim);" id="vpd-status-text">Analysiere Luft...</div></div>
                     <div class="klima-val vpd-color" id="val-vpd" style="font-size: 28px;">--.-<span class="klima-unit">kPa</span></div>
                 </div>
 
@@ -218,27 +162,14 @@
             <div>
                 <div class="section-title">Aktiviertes Profil</div>
                 <div class="active-program-card" id="activeProgramCard">
-                    <div class="ap-header">
-                        <div class="ap-title"><i style="font-style:normal;">⏳</i> Lade Daten...</div>
-                        <span id="ap-daynight" style="font-size:11px; font-weight:600; padding:6px 12px; background:rgba(120,120,120,0.1); border-radius:20px; color:var(--text-main);">--</span>
-                    </div>
-                    <div class="ap-grid" id="ap-details-grid">
-                        <div class="ap-item"><span class="ap-label">Temp</span><span class="ap-val">-- °C</span></div>
-                        <div class="ap-item"><span class="ap-label">Hum</span><span class="ap-val">--</span></div>
-                        <div class="ap-item"><span class="ap-label">Fan</span><span class="ap-val">--</span></div>
-                    </div>
+                    <div class="ap-header"><div class="ap-title"><i style="font-style:normal;">⏳</i> Lade Daten...</div><span id="ap-daynight" style="font-size:11px; font-weight:600; padding:6px 12px; background:rgba(120,120,120,0.1); border-radius:20px; color:var(--text-main);">--</span></div>
+                    <div class="ap-grid" id="ap-details-grid"><div class="ap-item"><span class="ap-label">Temp</span><span class="ap-val">-- °C</span></div><div class="ap-item"><span class="ap-label">Hum</span><span class="ap-val">--</span></div><div class="ap-item"><span class="ap-label">Fan</span><span class="ap-val">--</span></div></div>
                 </div>
 
                 <div class="section-title">Zyklus & Zeit</div>
                 <div class="grid-2">
-                    <div class="card" style="text-align: center; border-color: rgba(0,250,154,0.2);">
-                        <div class="tracker-title" style="color:var(--neon-green);">Wachstumstag</div>
-                        <div class="tracker-days" style="font-weight:300; color:var(--text-main); line-height:1;" id="val-days-growth">--</div>
-                    </div>
-                    <div class="card" style="text-align: center; border-color: rgba(184,41,255,0.2);">
-                        <div class="tracker-title" style="color:var(--neon-purple);">Blütetag</div>
-                        <div class="tracker-days" style="font-weight:300; color:var(--text-main); line-height:1;" id="val-days-bloom">--</div>
-                    </div>
+                    <div class="card" style="text-align: center; border-color: rgba(0,250,154,0.2);"><div class="tracker-title" style="font-size:10px; font-weight:700; color:var(--neon-green); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Wachstumstag</div><div class="tracker-days" style="font-size:36px; font-weight:300; color:var(--text-main); line-height:1;" id="val-days-growth">--</div></div>
+                    <div class="card" style="text-align: center; border-color: rgba(184,41,255,0.2);"><div class="tracker-title" style="font-size:10px; font-weight:700; color:var(--neon-purple); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Blütetag</div><div class="tracker-days" style="font-size:36px; font-weight:300; color:var(--text-main); line-height:1;" id="val-days-bloom">--</div></div>
                 </div>
             </div>
         </div>
@@ -256,10 +187,7 @@
                     <button class="phase-btn" id="btn-trocknung" onclick="setPhase('trocknung')"><i>🍂</i>Trocknung</button>
                 </div>
 
-                <div class="section-title" style="margin-top: 30px; display:flex; justify-content:space-between;">
-                    <span>Geräte Setup & Override</span>
-                    <span id="lock-hint" style="color: var(--neon-orange); font-size: 10px; display:none;">🔒 RELAIS GESPERRT</span>
-                </div>
+                <div class="section-title" style="margin-top: 30px; display:flex; justify-content:space-between;"><span>Geräte Setup & Override</span><span id="lock-hint" style="color: var(--neon-orange); font-size: 10px; display:none;">🔒 RELAIS GESPERRT</span></div>
                 
                 <div class="grid-2">
                     <div class="card" id="card-heizung" style="padding:15px;">
@@ -285,7 +213,7 @@
             </div>
 
             <div>
-                <div class="section-title">Globale Zeiten & Kalender</div>
+                <div class="section-title">System & Uhrzeit</div>
                 <div class="card" style="margin-bottom:20px;">
                     <div class="grid-2">
                         <div class="form-group"><label class="form-label">Tag Start</label><input type="time" id="gl-day-start" class="form-control" onchange="saveGlobalSettings()"></div>
@@ -293,20 +221,28 @@
                         <div class="form-group"><label class="form-label">Start Wachstum</label><input type="date" id="gl-start-w" class="form-control" onchange="saveGlobalSettings()"></div>
                         <div class="form-group"><label class="form-label">Start Blüte</label><input type="date" id="gl-start-b" class="form-control" onchange="saveGlobalSettings()"></div>
                     </div>
+                    
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button style="flex:1; background:rgba(0,250,154,0.1); color:var(--neon-green); border:1px solid var(--neon-green); padding:12px; border-radius:12px; font-weight:700; cursor:pointer;" onclick="syncTime()">⌚ Uhrzeit Sync</button>
+                        <button style="flex:1; background:rgba(255,42,85,0.1); color:#ff2a55; border:1px solid #ff2a55; padding:12px; border-radius:12px; font-weight:700; cursor:pointer;" onclick="startOTA()">📡 OTA Update</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="tab-plants" class="tab-content">
-        <div class="section-title">Pflanzen Dossiers</div>
+        <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Pflanzen & Tracking</span>
+            <button style="background:none; border:1px solid var(--text-dim); color:var(--text-main); padding:5px 10px; border-radius:8px; cursor:pointer; font-size:10px; font-weight:700;" onclick="exportCSV()">💾 CSV Export</button>
+        </div>
         <div class="desktop-split" id="plant-container"></div>
     </div>
 
     <nav class="bottom-nav">
         <button class="nav-btn active" onclick="switchTab('dashboard', this)"><i class="nav-icon">🎛️</i>Dashboard</button>
         <button class="nav-btn" onclick="switchTab('control', this)"><i class="nav-icon">⚙️</i>Steuerung</button>
-        <button class="nav-btn" onclick="switchTab('plants', this)"><i class="nav-icon">🪴</i>Dossiers</button>
+        <button class="nav-btn" onclick="switchTab('plants', this)"><i class="nav-icon">🪴</i>Pflanzen</button>
     </nav>
 
     <div class="modal-overlay" id="setupModal">
@@ -324,11 +260,7 @@
             relais: { heizung: false, befeuchter: false, ventilator: false, abluft: false },
             activePhase: 'wachstum',
             global: { dayStart: "06:00", dayEnd: "20:00", startWachstum: "", startBluete: "" },
-            settings: {
-                heizung: { tag: 25.0, nacht: 20.0, hyst: 1.0 },
-                befeuchter: { modus: 'rlf', zielRlf: 60, zielVpd: 1.0, hyst: 3.0 },
-                ventilator: { onMin: 15, offMin: 45, maxTemp: 28.0 }
-            }
+            settings: { heizung: { tag: 25.0, nacht: 20.0, hyst: 1.0 }, befeuchter: { modus: 'rlf', zielRlf: 60, zielVpd: 1.0, hyst: 3.0 }, ventilator: { onMin: 15, offMin: 45, maxTemp: 28.0 } }
         };
 
         window.onload = () => {
@@ -351,7 +283,6 @@
             document.getElementById('tab-' + tabId).classList.add('active'); btn.classList.add('active');
         }
 
-        // --- Sparklines (Animated) ---
         let tempChart, humChart;
         function initSparklines() {
             if(tempChart) tempChart.destroy(); if(humChart) humChart.destroy();
@@ -361,13 +292,7 @@
             let gradT = ctxT.createLinearGradient(0, 0, 0, 90); gradT.addColorStop(0, isLight ? 'rgba(225,112,85,0.5)' : 'rgba(255,157,0,0.5)'); gradT.addColorStop(1, 'rgba(255,157,0,0)');
             let gradH = ctxH.createLinearGradient(0, 0, 0, 90); gradH.addColorStop(0, isLight ? 'rgba(9,132,227,0.5)' : 'rgba(0,210,255,0.5)'); gradH.addColorStop(1, 'rgba(0,210,255,0)');
 
-            // Animation Settings
-            const opts = { 
-                animation: { duration: 2500, easing: 'easeOutQuart' },
-                responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, 
-                scales: { x: { display: false }, y: { display: false, min: 15, max: 35 } }, 
-                layout: { padding: 0 }, elements: { line: { tension: 0.5, borderWidth: 3 }, point: { radius: 0 } } 
-            };
+            const opts = { animation: { duration: 2500, easing: 'easeOutQuart' }, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false, min: 15, max: 35 } }, layout: { padding: 0 }, elements: { line: { tension: 0.5, borderWidth: 3 }, point: { radius: 0 } } };
             tempChart = new Chart(ctxT, { type: 'line', data: { labels: [], datasets: [{ borderColor: isLight ? '#e17055' : '#ff9d00', backgroundColor: gradT, data: [], fill: true }] }, options: JSON.parse(JSON.stringify(opts)) });
             let hOpts = JSON.parse(JSON.stringify(opts)); hOpts.scales.y.min = 30; hOpts.scales.y.max = 90;
             humChart = new Chart(ctxH, { type: 'line', data: { labels: [], datasets: [{ borderColor: isLight ? '#0984e3' : '#00d2ff', backgroundColor: gradH, data: [], fill: true }] }, options: hOpts });
@@ -394,47 +319,27 @@
         }
 
         function updateDashboardInfo() {
-            const s = appState.settings;
-            const isAuto = appState.activePhase !== 'manuell';
+            const s = appState.settings; const isAuto = appState.activePhase !== 'manuell';
             
             document.getElementById('info-heizung').innerText = `Ziel: ${s.heizung.tag}°C / ${s.heizung.nacht}°C`;
             document.getElementById('info-befeuchter').innerText = s.befeuchter.modus === 'vpd' ? `Ziel: ${s.befeuchter.zielVpd} kPa` : `Ziel: ${s.befeuchter.zielRlf} %`;
             document.getElementById('info-ventilator').innerText = `Zyk: ${s.ventilator.onMin}m / ${s.ventilator.offMin}m`;
 
-            // Lock-Status & Relais Overrides UI (Dynamic Check)
             ['heizung', 'befeuchter', 'ventilator', 'abluft'].forEach(d => {
                 const card = document.getElementById(`card-${d}`);
-                if(card && d !== 'abluft') {
-                    if(isAuto) {
-                        card.style.opacity = '0.5';
-                        card.querySelector('.toggle').style.pointerEvents = 'none';
-                    } else {
-                        card.style.opacity = '1';
-                        card.querySelector('.toggle').style.pointerEvents = 'auto';
-                    }
-                }
+                if(card && d !== 'abluft') { if(isAuto) { card.style.opacity = '0.5'; card.querySelector('.toggle').style.pointerEvents = 'none'; } else { card.style.opacity = '1'; card.querySelector('.toggle').style.pointerEvents = 'auto'; } }
                 
-                const isOn = appState.relais[d];
-                const statusCard = document.getElementById(`status-card-${d}`);
-                const icon = document.getElementById(`icon-${d}`);
-                const text = document.getElementById(`stat-${d}`);
-                
+                const isOn = appState.relais[d]; const statusCard = document.getElementById(`status-card-${d}`); const text = document.getElementById(`stat-${d}`);
                 text.innerText = isOn ? 'AN' : 'AUS';
                 if(isOn) {
                     statusCard.classList.add('is-on');
-                    if(d==='heizung') statusCard.style.color = 'var(--neon-orange)';
-                    if(d==='befeuchter') statusCard.style.color = 'var(--neon-blue)';
-                    if(d==='ventilator') statusCard.style.color = 'var(--text-main)';
-                    if(d==='abluft') statusCard.style.color = 'var(--neon-green)';
-                } else {
-                    statusCard.classList.remove('is-on');
-                    statusCard.style.color = 'inherit';
-                }
+                    if(d==='heizung') statusCard.style.color = 'var(--neon-orange)'; if(d==='befeuchter') statusCard.style.color = 'var(--neon-blue)';
+                    if(d==='ventilator') statusCard.style.color = 'var(--text-main)'; if(d==='abluft') statusCard.style.color = 'var(--neon-green)';
+                } else { statusCard.classList.remove('is-on'); statusCard.style.color = 'inherit'; }
                 document.getElementById(`rel-${d}`).checked = isOn;
             });
             document.getElementById('lock-hint').style.display = isAuto ? 'block' : 'none';
 
-            // Active Program Card
             const apCard = document.getElementById('activeProgramCard'); const grid = document.getElementById('ap-details-grid');
             if (!isAuto) {
                 apCard.style.borderColor = 'rgba(255, 157, 0, 0.3)'; apCard.querySelector('.ap-title').innerHTML = '<i style="font-style:normal;">👆</i> MANUELL'; apCard.querySelector('.ap-title').style.color = 'var(--neon-orange)';
@@ -442,61 +347,35 @@
                 document.getElementById('ap-daynight').innerText = "OVERRIDE"; document.getElementById('ap-daynight').style.color = "var(--text-main)";
             } else {
                 apCard.style.borderColor = 'rgba(0,250,154,0.3)'; apCard.querySelector('.ap-title').innerHTML = `<i style="font-style:normal;">🌱</i> ${appState.activePhase.toUpperCase()}`; apCard.querySelector('.ap-title').style.color = 'var(--neon-green)';
-                
                 const now = new Date(); const currentHM = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
                 const isDay = (currentHM >= appState.global.dayStart && currentHM < appState.global.dayEnd);
-                document.getElementById('ap-daynight').innerText = isDay ? "☀️ TAG" : "🌙 NACHT";
-                document.getElementById('ap-daynight').style.color = isDay ? "var(--neon-orange)" : "var(--neon-blue)";
-
-                grid.innerHTML = `
-                    <div class="ap-item"><span class="ap-label">Temp</span><span class="ap-val">${isDay ? s.heizung.tag : s.heizung.nacht}°C <span style="color:var(--text-dim); font-size:10px;">(±${s.heizung.hyst})</span></span></div>
-                    <div class="ap-item"><span class="ap-label">Hum</span><span class="ap-val">${s.befeuchter.modus === 'vpd' ? s.befeuchter.zielVpd.toFixed(1) + ' kPa' : s.befeuchter.zielRlf + '%'}</span></div>
-                    <div class="ap-item"><span class="ap-label">Fan</span><span class="ap-val">${s.ventilator.onMin}m / ${s.ventilator.offMin}m</span></div>
-                `;
+                document.getElementById('ap-daynight').innerText = isDay ? "☀️ TAG" : "🌙 NACHT"; document.getElementById('ap-daynight').style.color = isDay ? "var(--neon-orange)" : "var(--neon-blue)";
+                grid.innerHTML = `<div class="ap-item"><span class="ap-label">Temp</span><span class="ap-val">${isDay ? s.heizung.tag : s.heizung.nacht}°C <span style="color:var(--text-dim); font-size:10px;">(±${s.heizung.hyst})</span></span></div><div class="ap-item"><span class="ap-label">Hum</span><span class="ap-val">${s.befeuchter.modus === 'vpd' ? s.befeuchter.zielVpd.toFixed(1) + ' kPa' : s.befeuchter.zielRlf + '%'}</span></div><div class="ap-item"><span class="ap-label">Fan</span><span class="ap-val">${s.ventilator.onMin}m / ${s.ventilator.offMin}m</span></div>`;
             }
 
             const calcDays = (d) => d ? Math.max(0, Math.floor((new Date() - new Date(d)) / 86400000)) : 0;
-            document.getElementById('val-days-growth').innerText = calcDays(appState.global.startWachstum);
-            document.getElementById('val-days-bloom').innerText = calcDays(appState.global.startBluete);
-
+            document.getElementById('val-days-growth').innerText = calcDays(appState.global.startWachstum); document.getElementById('val-days-bloom').innerText = calcDays(appState.global.startBluete);
+            
             const vpdText = document.getElementById('vpd-status-text'); let v = appState.sensor.vpd;
-            if(v <= 0) vpdText.innerText = "Warte auf Sensordaten...";
-            else if(v < 0.8) vpdText.innerText = "Ideal für Keimlinge/Stecklinge";
-            else if(v <= 1.2) vpdText.innerText = "Ideal für Vegetationsphase";
-            else if(v <= 1.6) vpdText.innerText = "Ideal für Blütephase";
-            else vpdText.innerText = "⚠️ Warnung: Zu trocken!";
+            if(v <= 0) vpdText.innerText = "Warte auf Sensordaten..."; else if(v < 0.8) vpdText.innerText = "Ideal für Keimlinge/Stecklinge"; else if(v <= 1.2) vpdText.innerText = "Ideal für Vegetationsphase"; else if(v <= 1.6) vpdText.innerText = "Ideal für Blütephase"; else vpdText.innerText = "⚠️ Warnung: Zu trocken!";
         }
 
         let currentModal = '';
         function openModal(type) {
             currentModal = type; const body = document.getElementById('modalBody'); const s = appState.settings;
             document.getElementById('modalTitle').innerText = "⚙ " + type.toUpperCase() + " SETUP";
-            
-            if(type === 'heizung') {
-                body.innerHTML = `<div class="form-group"><label class="form-label">Tag Ziel (°C)</label><input type="number" step="0.5" id="in-ht" class="form-control" value="${s.heizung.tag}"></div><div class="form-group"><label class="form-label">Nacht Ziel (°C)</label><input type="number" step="0.5" id="in-hn" class="form-control" value="${s.heizung.nacht}"></div><div class="form-group"><label class="form-label">Hysterese (± °C)</label><input type="number" step="0.1" id="in-hh" class="form-control" value="${s.heizung.hyst}"></div>`;
-            }
-            if(type === 'befeuchter') {
-                body.innerHTML = `<div class="form-group"><label class="form-label">Steuerungs-Modus</label><select id="in-bm" class="form-control" onchange="toggleHumUI()"><option value="rlf" ${s.befeuchter.modus==='rlf'?'selected':''}>Fixe RLF (%)</option><option value="vpd" ${s.befeuchter.modus==='vpd'?'selected':''}>VPD Sättigung (kPa)</option></select></div><div class="form-group" id="w-rlf"><label class="form-label">Ziel RLF (%)</label><input type="number" id="in-br" class="form-control" value="${s.befeuchter.zielRlf}"></div><div class="form-group" id="w-vpd" style="display:none;"><label class="form-label">Ziel VPD (kPa)</label><input type="number" step="0.1" id="in-bv" class="form-control" value="${s.befeuchter.zielVpd}"></div><div class="form-group"><label class="form-label">Hysterese (±)</label><input type="number" step="0.5" id="in-bh" class="form-control" value="${s.befeuchter.hyst}"></div>`;
-                setTimeout(toggleHumUI, 10);
-            }
-            if(type === 'ventilator') {
-                body.innerHTML = `<div class="form-group"><label class="form-label">ON Intervall (Minuten)</label><input type="number" id="in-vo" class="form-control" value="${s.ventilator.onMin}"></div><div class="form-group"><label class="form-label">OFF Intervall (Minuten)</label><input type="number" id="in-vf" class="form-control" value="${s.ventilator.offMin}"></div><div class="form-group"><label class="form-label">Notfall-Kühlung ab (°C)</label><input type="number" step="0.5" id="in-vm" class="form-control" value="${s.ventilator.maxTemp}"></div>`;
-            }
+            if(type === 'heizung') body.innerHTML = `<div class="form-group"><label class="form-label">Tag Ziel (°C)</label><input type="number" step="0.5" id="in-ht" class="form-control" value="${s.heizung.tag}"></div><div class="form-group"><label class="form-label">Nacht Ziel (°C)</label><input type="number" step="0.5" id="in-hn" class="form-control" value="${s.heizung.nacht}"></div><div class="form-group"><label class="form-label">Hysterese (± °C)</label><input type="number" step="0.1" id="in-hh" class="form-control" value="${s.heizung.hyst}"></div>`;
+            if(type === 'befeuchter') { body.innerHTML = `<div class="form-group"><label class="form-label">Steuerungs-Modus</label><select id="in-bm" class="form-control" onchange="toggleHumUI()"><option value="rlf" ${s.befeuchter.modus==='rlf'?'selected':''}>Fixe RLF (%)</option><option value="vpd" ${s.befeuchter.modus==='vpd'?'selected':''}>VPD Sättigung (kPa)</option></select></div><div class="form-group" id="w-rlf"><label class="form-label">Ziel RLF (%)</label><input type="number" id="in-br" class="form-control" value="${s.befeuchter.zielRlf}"></div><div class="form-group" id="w-vpd" style="display:none;"><label class="form-label">Ziel VPD (kPa)</label><input type="number" step="0.1" id="in-bv" class="form-control" value="${s.befeuchter.zielVpd}"></div><div class="form-group"><label class="form-label">Hysterese (±)</label><input type="number" step="0.5" id="in-bh" class="form-control" value="${s.befeuchter.hyst}"></div>`; setTimeout(toggleHumUI, 10); }
+            if(type === 'ventilator') body.innerHTML = `<div class="form-group"><label class="form-label">ON Intervall (Minuten)</label><input type="number" id="in-vo" class="form-control" value="${s.ventilator.onMin}"></div><div class="form-group"><label class="form-label">OFF Intervall (Minuten)</label><input type="number" id="in-vf" class="form-control" value="${s.ventilator.offMin}"></div><div class="form-group"><label class="form-label">Notfall-Kühlung ab (°C)</label><input type="number" step="0.5" id="in-vm" class="form-control" value="${s.ventilator.maxTemp}"></div>`;
             document.getElementById('setupModal').classList.add('active');
         }
-
-        function toggleHumUI() {
-            const m = document.getElementById('in-bm').value;
-            document.getElementById('w-rlf').style.display = m === 'rlf' ? 'block' : 'none';
-            document.getElementById('w-vpd').style.display = m === 'vpd' ? 'block' : 'none';
-        }
-
+        function toggleHumUI() { const m = document.getElementById('in-bm').value; document.getElementById('w-rlf').style.display = m === 'rlf' ? 'block' : 'none'; document.getElementById('w-vpd').style.display = m === 'vpd' ? 'block' : 'none'; }
+        
         function saveSettings() {
             let p = { settings: {} };
             if(currentModal === 'heizung') { appState.settings.heizung.tag = parseFloat(document.getElementById('in-ht').value); appState.settings.heizung.nacht = parseFloat(document.getElementById('in-hn').value); appState.settings.heizung.hyst = parseFloat(document.getElementById('in-hh').value); p.settings.heizung = appState.settings.heizung; }
             if(currentModal === 'befeuchter') { appState.settings.befeuchter.modus = document.getElementById('in-bm').value; appState.settings.befeuchter.zielRlf = parseFloat(document.getElementById('in-br').value); appState.settings.befeuchter.zielVpd = parseFloat(document.getElementById('in-bv').value); appState.settings.befeuchter.hyst = parseFloat(document.getElementById('in-bh').value); p.settings.befeuchter = appState.settings.befeuchter; }
             if(currentModal === 'ventilator') { appState.settings.ventilator.onMin = parseInt(document.getElementById('in-vo').value); appState.settings.ventilator.offMin = parseInt(document.getElementById('in-vf').value); appState.settings.ventilator.maxTemp = parseFloat(document.getElementById('in-vm').value); p.settings.ventilator = appState.settings.ventilator; }
-            
             sendBLECommand(p); document.getElementById('setupModal').classList.remove('active'); updateDashboardInfo();
         }
 
@@ -505,7 +384,7 @@
             for(let i=1; i<=4; i++) {
                 html += `<div class="card" style="padding: 25px;">
                     <div style="font-size:18px; font-weight:300; color:var(--neon-purple); margin-bottom:20px; border-bottom:1px solid var(--glass-border); padding-bottom:15px; display:flex; justify-content:space-between;">
-                        <span>🪴 Slot 0${i}</span><span style="font-size:10px; color:var(--text-dim); font-weight:normal;">Lokal</span>
+                        <span>🪴 Pflanze 0${i}</span><span style="font-size:10px; color:var(--text-dim); font-weight:normal;">Lokal</span>
                     </div>
                     <div class="grid-2">
                         <div class="form-group"><label class="form-label">Sorte</label><input type="text" id="p${i}-s" class="form-control" placeholder="Sorte"></div>
@@ -520,14 +399,40 @@
             }
             document.getElementById('plant-container').innerHTML = html;
         }
+
         function savePlant(i, btn) {
             localStorage.setItem(`p${i}`, JSON.stringify({s: document.getElementById(`p${i}-s`).value, b: document.getElementById(`p${i}-b`).value, m: document.getElementById(`p${i}-m`).value, d: document.getElementById(`p${i}-d`).value, nut: document.getElementById(`p${i}-nut`).value, n: document.getElementById(`p${i}-n`).value}));
-            btn.innerText = "Gespeichert!"; setTimeout(() => btn.innerText = "Speichern", 2000);
+            btn.classList.add('feedback'); btn.innerText = "✅ GESPEICHERT";
+            setTimeout(() => { btn.classList.remove('feedback'); btn.innerText = "Speichern"; }, 1500);
         }
+
         function loadPlants() {
             for(let i=1; i<=4; i++) {
                 let d = JSON.parse(localStorage.getItem(`p${i}`));
                 if(d) { document.getElementById(`p${i}-s`).value = d.s || ''; document.getElementById(`p${i}-b`).value = d.b || ''; document.getElementById(`p${i}-m`).value = d.m || ''; document.getElementById(`p${i}-d`).value = d.d || ''; document.getElementById(`p${i}-nut`).value = d.nut || ''; document.getElementById(`p${i}-n`).value = d.n || ''; }
+            }
+        }
+
+        function exportCSV() {
+            let csv = "Slot;Sorte;Breeder;Medium;Keimdatum;Duenger;Notizen\n";
+            for(let i=1; i<=4; i++) {
+                let d = JSON.parse(localStorage.getItem(`p${i}`));
+                if(d) csv += `${i};${d.s};${d.b};${d.m};${d.d};${d.nut};${d.n.replace(/\n/g, ' ')}\n`;
+            }
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "greencontrol_pflanzen.csv";
+            link.style.display = "none"; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        }
+
+        function syncTime() {
+            const unix = Math.floor(Date.now() / 1000);
+            sendBLECommand({ timeSync: unix });
+            alert("Uhrzeit erfolgreich mit Smartphone synchronisiert!");
+        }
+
+        function startOTA() {
+            if(confirm("Möchtest du ein OTA Update starten? Der ESP32 öffnet nun ein WLAN namens 'GreenControl-OTA'.")) {
+                sendBLECommand({ startOTA: true });
             }
         }
 
@@ -553,8 +458,7 @@
             document.getElementById('val-hum').innerHTML = data.sensor.hum.toFixed(0) + '<span class="klima-unit">%</span>';
             document.getElementById('val-vpd').innerHTML = data.sensor.vpd.toFixed(2) + '<span class="klima-unit">kPa</span>';
             
-            appState.relais = data.relais;
-            appState.sensor = data.sensor;
+            appState.relais = data.relais; appState.sensor = data.sensor;
             
             if(data.activePhase && data.activePhase !== appState.activePhase) { 
                 appState.activePhase = data.activePhase; 
@@ -565,18 +469,8 @@
         }
 
         async function sendBLECommand(payloadObj) { if (rxChar) await rxChar.writeValue(new TextEncoder().encode(JSON.stringify(payloadObj))); }
-        function manualOverride(device, el) { 
-            appState.relais[device] = el.checked;
-            sendBLECommand({ relais: { [device]: el.checked }}); 
-            setPhase('manuell'); 
-        }
-        function setPhase(phase) {
-            document.querySelectorAll('.phase-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-' + phase).classList.add('active');
-            appState.activePhase = phase;
-            sendBLECommand({ activePhase: phase });
-            updateDashboardInfo();
-        }
+        function manualOverride(device, el) { appState.relais[device] = el.checked; sendBLECommand({ relais: { [device]: el.checked }}); setPhase('manuell'); }
+        function setPhase(phase) { document.querySelectorAll('.phase-btn').forEach(b => b.classList.remove('active')); document.getElementById('btn-' + phase).classList.add('active'); appState.activePhase = phase; sendBLECommand({ activePhase: phase }); updateDashboardInfo(); }
     </script>
 </body>
 </html>
