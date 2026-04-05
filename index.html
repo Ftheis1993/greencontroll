@@ -157,7 +157,7 @@
             display: none; box-shadow: 0 4px 20px rgba(239, 68, 68, 0.15); margin-bottom: 24px; animation: slideDown 0.4s ease; border-radius: var(--radius-md);
         }
         .warning-card h3 { color: var(--accent-red); font-size: 14px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;}
-        .warning-list { list-style: none; font-size: 13px; color: var(--text-primary); line-height: 1.6;}
+        .warning-list { list-style: none; font-size: 13px; font-weight: 500; color: var(--text-primary); line-height: 1.6;}
         .warning-list li { margin-bottom: 6px; padding-left: 20px; position: relative; }
         .warning-list li::before { content: '•'; position: absolute; left: 0; color: var(--accent-red); font-size: 16px; top: -2px;}
 
@@ -512,16 +512,6 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="aiModal">
-        <div class="modal-content">
-            <div class="modal-title" style="color:var(--accent-blue);">✨ KI Assistent</div>
-            <p style="font-size:13px; color:var(--text-secondary); margin-bottom:20px; line-height:1.6;">Kopiere diesen maßgeschneiderten Befehl und füge ihn bei ChatGPT oder Gemini ein:</p>
-            <textarea id="ai-prompt-text" class="form-control" style="min-height:140px; color:var(--accent-green); margin-bottom:20px; resize:none;" readonly></textarea>
-            <button class="btn-primary" style="background:var(--accent-blue); color:#fff;" onclick="copyPrompt()">📋 Prompt kopieren</button>
-            <button class="btn-outline" style="margin-top:12px;" onclick="document.getElementById('aiModal').classList.remove('active')">Schließen</button>
-        </div>
-    </div>
-
     <script>
         // --- Core Data ---
         const profileDefaults = {
@@ -538,6 +528,8 @@
             global: { dayStart: "06:00", dayEnd: "20:00", startWachstum: "", startBluete: "" },
             settings: { heizung: { tag: 25.0, nacht: 20.0, hyst: 1.0 }, befeuchter: { modus: 'rlf', zielRlf: 60, zielVpd: 1.0, hyst: 3.0 }, ventilator: { onMin: 15, offMin: 45, maxTemp: 28.0 } }
         };
+        
+        let deviceConnected = false; // BLE Status
 
         // --- Init ---
         window.onload = () => {
@@ -571,7 +563,12 @@
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
             document.getElementById('themeBtn').innerText = isLight ? '🌙' : '☀️';
-            initSparklines(); generateDummyHistory();
+            
+            initSparklines(); 
+            // Dummy-Historie nur laden, wenn noch keine echten BLE-Daten da sind
+            if (isFirstBLEData) {
+                generateDummyHistory();
+            }
         }
 
         function switchTab(tabId, btn) {
@@ -610,7 +607,49 @@
             humChart.data.labels = labels; humChart.data.datasets[0].data = hum; humChart.update();
         }
 
+        // --- Live Chart Updates ---
+        const MAX_CHART_POINTS = 50; 
+        let isFirstBLEData = true;
+
+        function updateChartsWithRealData(temp, hum) {
+            if (!tempChart || !humChart) return;
+
+            if (isFirstBLEData) {
+                tempChart.data.labels = [];
+                tempChart.data.datasets[0].data = [];
+                humChart.data.labels = [];
+                humChart.data.datasets[0].data = [];
+                isFirstBLEData = false;
+            }
+
+            const now = new Date();
+            const timeLabel = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
+
+            tempChart.data.labels.push(timeLabel);
+            tempChart.data.datasets[0].data.push(temp);
+
+            humChart.data.labels.push(timeLabel);
+            humChart.data.datasets[0].data.push(hum);
+
+            if (tempChart.data.labels.length > MAX_CHART_POINTS) {
+                tempChart.data.labels.shift();
+                tempChart.data.datasets[0].data.shift();
+                
+                humChart.data.labels.shift();
+                humChart.data.datasets[0].data.shift();
+            }
+
+            tempChart.update('none');
+            humChart.update('none');
+        }
+
         // --- Logic ---
+        function calculateVPD(tempC, hum) {
+            const svp = 0.61078 * Math.exp((17.27 * tempC) / (tempC + 237.3));
+            const avp = svp * (hum / 100);
+            return svp - avp;
+        }
+
         function saveGlobalSettings() {
             appState.global.dayStart = document.getElementById('gl-day-start').value; appState.global.dayEnd = document.getElementById('gl-day-end').value;
             appState.global.startWachstum = document.getElementById('gl-start-w').value; appState.global.startBluete = document.getElementById('gl-start-b').value;
@@ -666,7 +705,15 @@
 
             ['heizung', 'befeuchter', 'ventilator', 'abluft'].forEach(d => {
                 const card = document.getElementById(`card-${d}`);
-                if(card && d !== 'abluft') { if(isAuto) { card.style.opacity = '0.4'; card.querySelector('.toggle').style.pointerEvents = 'none'; } else { card.style.opacity = '1'; card.querySelector('.toggle').style.pointerEvents = 'auto'; } }
+                if(card && d !== 'abluft') { 
+                    if(isAuto) { 
+                        card.style.opacity = '0.4'; 
+                        card.style.pointerEvents = 'none'; 
+                    } else { 
+                        card.style.opacity = '1'; 
+                        card.style.pointerEvents = 'auto'; 
+                    } 
+                }
                 
                 const isOn = appState.relais[d]; const statusCard = document.getElementById(`status-card-${d}`); const text = document.getElementById(`stat-${d}`);
                 text.innerText = isOn ? 'ON' : 'OFF';
@@ -753,9 +800,8 @@
             let html = '';
             for(let i=1; i<=4; i++) {
                 html += `<div class="card" style="padding: 24px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; border-bottom:1px solid var(--border-card); padding-bottom:16px;">
+                    <div style="margin-bottom:24px; border-bottom:1px solid var(--border-card); padding-bottom:16px;">
                         <h4 style="font-size:16px; font-weight:600; color:var(--text-primary);">🪴 Slot 0${i}</h4>
-                        <button class="btn-ai" onclick="openAIModal(${i})">✨ KI Assistent</button>
                     </div>
                     <div class="grid-2">
                         <div class="form-group"><label class="form-label">Strain</label><input type="text" id="p${i}-s" class="form-control" placeholder="Sorte"></div>
@@ -769,23 +815,6 @@
                 </div>`;
             }
             document.getElementById('plant-container').innerHTML = html;
-        }
-
-        function openAIModal(slotIndex) {
-            const strain = document.getElementById(`p${slotIndex}-s`).value || "[Sorte eintragen]";
-            const medium = document.getElementById(`p${slotIndex}-m`).value || "[Medium eintragen]";
-            const phase = appState.activePhase;
-            const prompt = `Hallo KI, ich züchte gerade die Cannabissorte "${strain}" im Medium "${medium}". Meine Pflanze ist in der Phase "${phase}". 
-Kannst du mir die wichtigsten 3 Tipps für exakt diese Phase geben? Worauf muss ich bei Nährstoffen, Temperatur und Luftfeuchtigkeit achten? Gibt es bei dieser Genetik besondere Anfälligkeiten?`;
-            document.getElementById('ai-prompt-text').value = prompt;
-            document.getElementById('aiModal').classList.add('active');
-        }
-
-        function copyPrompt() {
-            const text = document.getElementById('ai-prompt-text');
-            text.select(); document.execCommand('copy');
-            document.querySelector('#aiModal .btn-primary').innerText = "Kopiert!";
-            setTimeout(()=> document.querySelector('#aiModal .btn-primary').innerText = "📋 Prompt kopieren", 2000);
         }
 
         function savePlant(i, btn) {
@@ -835,21 +864,50 @@ Kannst du mir die wichtigsten 3 Tipps für exakt diese Phase geben? Worauf muss 
             try {
                 const btn = document.getElementById('bleBtn'); btn.innerText = "Suche...";
                 const device = await navigator.bluetooth.requestDevice({ filters: [{ name: 'GreenControl' }], optionalServices: [serviceUUID] });
-                device.addEventListener('gattserverdisconnected', () => { btn.innerText = "Verbinden"; btn.classList.remove('connected'); });
-                const server = await device.gatt.connect(); const service = await server.getPrimaryService(serviceUUID);
-                const liveTx = await service.getCharacteristic(charLiveTX); await liveTx.startNotifications(); liveTx.addEventListener('characteristicvaluechanged', handleLiveUpdate);
+                
+                device.addEventListener('gattserverdisconnected', () => { 
+                    deviceConnected = false;
+                    btn.innerText = "Verbinden"; 
+                    btn.classList.remove('connected'); 
+                    updateDashboardInfo();
+                });
+                
+                const server = await device.gatt.connect(); 
+                const service = await server.getPrimaryService(serviceUUID);
+                const liveTx = await service.getCharacteristic(charLiveTX); 
+                await liveTx.startNotifications(); 
+                liveTx.addEventListener('characteristicvaluechanged', handleLiveUpdate);
                 rxChar = await service.getCharacteristic(charCmdRX);
-                btn.innerText = "Verbunden"; btn.classList.add('connected');
-            } catch (error) { console.error(error); document.getElementById('bleBtn').innerText = "Fehler"; }
+                
+                deviceConnected = true;
+                btn.innerText = "Verbunden"; 
+                btn.classList.add('connected');
+            } catch (error) { 
+                console.error(error); 
+                document.getElementById('bleBtn').innerText = "Fehler"; 
+                deviceConnected = false; 
+            }
         }
 
         function handleLiveUpdate(e) {
             const data = JSON.parse(new TextDecoder().decode(e.target.value));
+            
+            // Fallback: VPD lokal berechnen, falls nicht vom Controller gesendet
+            if (data.sensor.temp && data.sensor.hum && typeof data.sensor.vpd === 'undefined') {
+                data.sensor.vpd = calculateVPD(data.sensor.temp, data.sensor.hum);
+            }
+
             document.getElementById('val-temp').innerHTML = data.sensor.temp.toFixed(1) + '<span class="klima-unit">°C</span>';
             document.getElementById('val-hum').innerHTML = data.sensor.hum.toFixed(0) + '<span class="klima-unit">%</span>';
-            document.getElementById('val-vpd').innerHTML = data.sensor.vpd.toFixed(2) + '<span class="klima-unit">kPa</span>';
+            document.getElementById('val-vpd').innerHTML = (data.sensor.vpd || 0).toFixed(2) + '<span class="klima-unit">kPa</span>';
             
-            appState.relais = data.relais; appState.sensor = data.sensor;
+            appState.relais = data.relais; 
+            appState.sensor = data.sensor;
+            
+            // Live-Daten an die Graphen weitergeben
+            if (data.sensor.temp && data.sensor.hum) {
+                updateChartsWithRealData(data.sensor.temp, data.sensor.hum);
+            }
             
             if(data.activePhase && data.activePhase !== appState.activePhase) { 
                 appState.activePhase = data.activePhase; 
